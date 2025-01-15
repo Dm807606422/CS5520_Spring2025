@@ -1,22 +1,40 @@
 import { StyleSheet,TextInput, Text, View } from 'react-native'
-import React from 'react'
 import { useState } from 'react';
+import React, { useRef, useEffect} from 'react';
 
-export default function Input() {
+interface InputProps {
+  shouldFocus: boolean;
+}
+
+export default function Input({ shouldFocus }: InputProps) {
     const [text,setText] = useState("");
-    function updateText(changedText:string) {
+    const [isFocused, setIsFocused] = useState(shouldFocus);
 
-    setText(changedText);
-    }
+
     return (
     <View>
     <TextInput 
-       value ={text} 
-       onChangeText ={updateText}
-       placeholder='type something'
-     />
+      value = {text}
+      onChangeText ={setText}
+      placeholder='type something'
+      autoFocus={shouldFocus}
+      onFocus={() => setIsFocused(true)} 
+      onBlur={() => setIsFocused(false)}
+    />
+    {isFocused && text.length > 0 && (
+        <Text>Character count: {text.length}</Text>
+      )}
+    
+    {!isFocused && (
+        <Text>
+          {text.length >= 3
+            ? 'Thank you'
+            : 'Please type more than 3 characters'}
+        </Text>
+      )}
     </View>
   )
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+})
