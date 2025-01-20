@@ -1,17 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import Header from './componant/Header';
 import Input from './componant/Input';
+import React, { useCallback, useState } from 'react';
 
 export default function App() {
   const appName = "Dm App";
-  
+
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
       <Header name = {appName}/>
-      <Input />
-      
+      <Input  shouldFocus={true}/>
     </View>
   );
 }
