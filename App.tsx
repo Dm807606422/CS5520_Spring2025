@@ -16,6 +16,11 @@ export default function App() {
     
   }
 
+  const handleCancel = () => {
+    console.log("Modal dismissed.");
+    setModalVisible(false);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
@@ -23,7 +28,7 @@ export default function App() {
       <View style={styles.topContainer}>
       <Header name = {appName}/>
   const [modalVisible, setModalVisible] = useState("");
-      <Input  shouldFocus={true} inputHandler = {handleInputData} modalVisible = {modalVisible}/>
+      <Input  shouldFocus={true} inputHandler = {handleInputData} modalVisible = {modalVisible}  onCancel={handleCancel}/>
       <Button  title = "Add Goal" onPress = {() => setModalVisible(true)} />
       </View>
 
