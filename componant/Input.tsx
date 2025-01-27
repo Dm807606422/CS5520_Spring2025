@@ -1,142 +1,156 @@
-import { StyleSheet,TextInput, Text, View, Button, Modal, Alert, Image} from 'react-native'
-import { useState } from 'react';
-import React, { useRef, useEffect} from 'react';
+import { Alert,
+  Button,
+  Image,
+  Modal,
+  StyleSheet,
+  Text,
+  TextInput,
+  View, } from "react-native";
+import React from "react";
+import { useState } from "react";
+
+
+
 
 interface InputProps {
-  shouldFocus: boolean;
-  inputHandler: (data:string) => void;
+  textInputFocus: boolean;
+  inputHandler: (data: string) => void;
   modalVisible: boolean;
-  onCancel: () => void;
+  dismissModal: () => void;
 }
 
-export default function Input({ shouldFocus, inputHandler, modalVisible, onCancel}: InputProps) {
-    const [text,setText] = useState("");
-    const [isFocused, setIsFocused] = useState(shouldFocus);
-    const [isConfirmEnabled, setIsConfirmEnabled] = useState(false);
+export default function Input({
+  textInputFocus,
+  inputHandler,
+  modalVisible,
+  dismissModal
+}: InputProps) {
 
-    function handleConfirm() {
-      console.log("user has typed", text); 
-      inputHandler(text);
-      setText(""); 
-      setIsConfirmEnabled(false);
-    }
-
-    function handleCancel() {
-      Alert.alert(
-        "Cancel Action",
-        "Are you sure you want to cancel?",
-        [
-          { text: "No", style: "cancel" },
-          {
-            text: "Yes",
-            onPress: () => {
-              onCancel();
-              setText(""); // Clear the TextInput
-              setIsConfirmEnabled(false); // Disable Confirm button
-            },
-          },
-        ]
-      );
-    }
-
-    function handleTextChange(input: string) {
-      setText(input);
-      setIsConfirmEnabled(input.length >= 3); // Enable Confirm if input length >= 3
-    }
+  const [text, setText] = useState("");
+  const [blur, setBlur] = useState(false);
+  const minimumChar = 3;
 
 
-    return (
-    <Modal transparent= {true} visible= {modalVisible} animationType='slide'>
-      <View style ={styles.container}>
-        <View style = {styles.modalContainer}>
-        <View style={styles.imageContainer}>
+  function updateText(changedText: string) {
+    // update the text state
+    setText(changedText);
+  }
+
+  function handleConfirm() {
+    console.log("user has typed ", text);
+    // call the callback from App
+    //pass the data that user typed
+    inputHandler(text);
+    setText("");
+  }
+
+
+  function handleCancel() {
+    // hide the modal
+    Alert.alert("Cancel", "Are you sure you want to cancel", [
+      { text: "cancel", style: "cancel" },
+      {
+        text: "ok",
+        onPress: () => {
+          setText("");
+          dismissModal();
+        },
+      },
+    ]);
+  }
+
+  return (
+    <Modal transparent={true} visible={modalVisible} animationType="slide">
+      <View style={styles.container}>
+        <View style={styles.modalContainer}>
           <Image
-            source={{ uri: "https://cdn-icons-png.flaticon.com/512/2617/2617812.png" }}
+            source={{
+              uri: "https://cdn-icons-png.flaticon.com/512/2617/2617812.png",
+            }}
             style={styles.image}
-            alt="Network image example"
+            alt="Image of a an arrow"
           />
           <Image
-            source={require("C:/Users/dmmao/Desktop/5220/project/spring2025/2617812.png")}
+            source={require("../assets/goal.png")}
             style={styles.image}
-            alt="Local image example"
+            alt="Image of a an arrow"
           />
-        </View>
-        <TextInput 
-          value = {text}
-          style={styles.textInput}
-          onChangeText ={handleTextChange}
-          placeholder='type something'
-          autoFocus={shouldFocus}
-          onFocus={() => setIsFocused(true)} 
-          onBlur={() => setIsFocused(false)}
-        />
-        {isFocused && text.length > 0 && (
-            <Text>Character count: {text.length}</Text>
+          <TextInput
+            style={styles.input}
+            autoFocus={textInputFocus}
+            value={text}
+            onChangeText={updateText}
+            placeholder="Type something"
+            onBlur={() => {
+              setBlur(true);
+            }}
+            onFocus={() => {
+              setBlur(false);
+            }}
+          />
+          {blur ? (
+            text.length >= 3 ? (
+              <Text style={styles.text}>Thank you</Text>
+            ) : (
+              <Text style={styles.text}>
+                Please type more than 3 characters
+              </Text>
+            )
+          ) : (
+            text && <Text style={styles.text}>{text.length}</Text>
           )}
-      
-      {!isFocused && (
-          <Text>
-            {text.length >= 3
-              ? 'Thank you'
-              : 'Please type more than 3 characters'}
-          </Text>
-        )}
-        
-        <View style={styles.buttonContainerRow}>
-          <View style={styles.buttonContainer}>
-              <Button title="Confirm" onPress={handleConfirm } disabled={!isConfirmEnabled}/>
-          </View>
-          <View style={styles.buttonContainer}>
+          <View style={styles.buttonsRow}>
+            <View style={styles.buttonContainer}>
               <Button title="Cancel" onPress={handleCancel} />
+            </View>
+            <View style={styles.buttonContainer}>
+              <Button
+                disabled={text.length < minimumChar}
+                title="Confirm"
+                onPress={handleConfirm}
+              />
+            </View>
           </View>
         </View>
-      </View>
       </View>
     </Modal>
-  )
-
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    // backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
   },
   modalContainer: {
-    backgroundColor: "#eee",
+    // backgroundColor: "#eee",
     borderRadius: 10,
-    padding: 20,
+    alignItems: "center",
+    backgroundColor: "#aaa",
   },
-  textInput: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
-    width: 200,
-    fontSize: 16,
-  },
-  text: {
-    fontSize: 14,
-    color: "#333",
-    marginBottom: 10,
-  },
-  buttonContainerRow: {
-    flexDirection: "column",
-    justifyContent: "space-around",
-    marginTop: 10,
+  input: {
+    borderColor: "purple",
+    borderWidth: 2,
+    padding: 5,
+    color: "blue",
+    margin: 5,
   },
   buttonContainer: {
-    width: "40%",
+    width: "30%",
+    margin: 10,
   },
-  imageContainer: {
-    flexDirection: "column",
-    justifyContent: "space-around",
-    marginVertical: 20,
+  text: {
+    color: "purple",
+    margin: 5,
+  },
+  buttonsRow: {
+    flexDirection: "row",
   },
   image: {
     width: 100,
     height: 100,
+    marginVertical: 5,
   },
 });
