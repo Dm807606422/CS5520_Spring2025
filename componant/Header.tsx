@@ -1,27 +1,16 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View } from "react-native";
+import React from "react";
 
+// type HeaderProps = {name:string};
 interface HeaderProps {
-    name: string;
+  name: string;
 }
-const Header = ({name}:HeaderProps) => {
+export default function Header({ name }: HeaderProps) {
   return (
     <View>
       <Text>Welcome to {name}</Text>
     </View>
-  )
+  );
 }
 
-export default Header
-
-// interface HeaderProps {
-//     name: string;
-// }
-
-// export default function Header(name:{appName}){
-//     return (
-//     <View>
-//         <Text>Welcom to {appName}<Text/>
-//     <View/>
-//     )
-// }
+const styles = StyleSheet.create({});

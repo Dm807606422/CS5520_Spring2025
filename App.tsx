@@ -1,40 +1,37 @@
-import { StatusBar } from 'expo-status-bar';
-import { Button, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
-import Header from './componant/Header';
-import Input from './componant/Input';
-import React, { useCallback, useState } from 'react';
+import { StatusBar } from "expo-status-bar";
+import { StyleSheet, View, Text, Button, SafeAreaView } from "react-native";
+import Header from "./componant/Header";
+import Input from "./componant/Input";
+import { useState } from "react";
 
 export default function App() {
-  const appName = "Dm App";
+  const appName = "My Awesome App";
+  //define a state variable to store the data from Input
   const [receivedData, setReceivedData] = useState("");
-  const [modalVisible, setModalVisible] = useState(false);
-
-  function handleInputData(data:string) {
-    console.log("receive:", data);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  function handleInputData(data: string) {
+    // this function will receive data from Input
+    console.log("data received from Input ", data);
+    //store the data in the state variable
     setReceivedData(data);
-    setModalVisible(false);
-    
+    //close the modal
+    setIsModalVisible(false);
   }
-
-  const handleCancel = () => {
-    console.log("Modal dismissed.");
-    setModalVisible(false);
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
-
       <View style={styles.topContainer}>
-      <Header name = {appName}/>
-      <Input  shouldFocus={true} inputHandler = {handleInputData} modalVisible = {modalVisible}/>
-
-      <Button  title = "Add Goal" onPress = {() => setModalVisible(true)} />
+        <Header name={appName} />
+        <Input
+          textInputFocus={true}
+          inputHandler={handleInputData}
+          modalVisible={isModalVisible}
+        />
+        <Button title="Add a Goal" onPress={() => setIsModalVisible(true)} />
       </View>
-
       <View style={styles.bottomContainer}>
-      <Text style={{ backgroundColor: "pink" }}>{receivedData}</Text>
-    </View>
+        <Text style={{ backgroundColor: "pink" }}>{receivedData}</Text>
+      </View>
     </SafeAreaView>
   );
 }
