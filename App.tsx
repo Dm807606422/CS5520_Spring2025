@@ -22,7 +22,6 @@ export default function App() {
 
       <View style={styles.topContainer}>
       <Header name = {appName}/>
-  const [modalVisible, setModalVisible] = useState("");
       <Input  shouldFocus={true} inputHandler = {handleInputData} modalVisible = {modalVisible}/>
       <Button  title = "Add Goal" onPress = {() => setModalVisible(true)} />
       </View>
