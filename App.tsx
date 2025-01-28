@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   ScrollView,
   FlatList,
+  Alert
 } from "react-native";
 import Header from "./componant/Header";
 import Input from "./componant/Input";
@@ -52,6 +53,25 @@ export default function App() {
   function dismissModal() {
     setIsModalVisible(false);
   }
+
+
+  function handleDeleteAll() {
+    Alert.alert(
+      "Delete All Goals",
+      "Are you sure you want to delete all goals?",
+      [
+        {
+          text: "No",
+          style: "cancel",
+        },
+        {
+          text: "Yes",
+          onPress: () => setGoals([]), 
+        },
+      ]
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
@@ -73,6 +93,26 @@ export default function App() {
             //pass the received item to GoalItem component as a prop
             return <GoalItem goalObj={item} deleteHandler={handleDeleteGoal} />;
           }}
+          ListEmptyComponent={() => (
+            <Text style={styles.emptyText}>No goals to show</Text>
+          )}
+
+          ItemSeparatorComponent={() => {
+            console.log("Rendering separator");
+            return <View style={styles.separator} />;
+          }}
+
+
+          ListHeaderComponent={goals.length > 0 ? (
+            <Text style={styles.headerText}>My Goals</Text>
+          ) : null}
+          ListFooterComponent={
+            goals.length > 0 ? (
+              <View style={styles.footerContainer}>
+                <Button title="Delete All" onPress={handleDeleteAll} color="red" />
+              </View>
+            ) : null}
+          
         />
         {/* <ScrollView contentContainerStyle={styles.centeredHorizontal}>
           {goals.map((goalObj) => {
@@ -108,5 +148,27 @@ const styles = StyleSheet.create({
 
   centeredHorizontal: {
     alignItems: "center",
+  },
+  emptyText: {
+    textAlign: "center",
+    fontSize: 18,
+    color: "gray",
+    marginTop: 20,
+  },
+  headerText: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "purple",
+    textAlign: "center",
+    marginVertical: 15,
+  },
+  footerContainer: {
+    marginTop: 20,
+    alignItems: "center",
+  },
+  separator: {
+    height: 5,
+    backgroundColor: "#000",   
+    marginVertical: 8,
   },
 });
