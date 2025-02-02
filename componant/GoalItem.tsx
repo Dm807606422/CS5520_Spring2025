@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#aaa",
         padding: 10,
         alignItems: "center",
-        marginTop: 10,
+        marginTop: 1,
     },
     text: {
         color: "purple",
