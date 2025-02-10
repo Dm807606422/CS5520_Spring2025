@@ -7,31 +7,64 @@ import {
   SafeAreaView,
   ScrollView,
   FlatList,
-  Alert
+  Alert,
 } from "react-native";
 import Header from "./componant/Header";
 import Input from "./componant/Input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import GoalItem from "./componant/GoalItem";
+import { goalData, writeToDB, deleteFromDB } from "./Firebase/firestoreHelpers";
+import { collection, onSnapshot } from "firebase/firestore";
+import { database } from "./Firebase/firebaseSetup";
 
-export interface Goal {
-  id: number;
+export interface GoalFromDB {
+  id: string;
   text: string;
 }
 export default function App() {
   const appName = "My Awesome App";
-  const [goals, setGoals] = useState<Goal[]>([]);
+  const [goals, setGoals] = useState<GoalFromDB[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  function handleDeleteGoal(deletedId: number) {
+  useEffect(() => {
+    //start the listener on real time changes on goals collection
+    const unsubscribe = onSnapshot(
+      collection(database, "goals"),
+      (querySnapshot) => {
+        //check if the querySnapshot is empty
+        if (querySnapshot.empty) {
+          setGoals([]);
+        } else {
+          let newArrayOfGoals: GoalFromDB[] = [];
+          querySnapshot.forEach((docSnapshot) => {
+            console.log(docSnapshot.id);
+            newArrayOfGoals.push({
+              ...(docSnapshot.data() as goalData),
+              id: docSnapshot.id,
+            });
+          });
+          console.log("newArrayOfGoals", newArrayOfGoals);
+          setGoals(newArrayOfGoals);
+        }
+      }
+    );
+    //return a cleanup function to stop the listener
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+  function handleDeleteGoal(deletedId: string) {
     //which goal was deleted?
     //I need to update the goals array by removing the goal
     //filter out the goal with the id that was passed
 
-    setGoals((prevGoals) => {
-      return prevGoals.filter((goalObj) => {
-        return goalObj.id !== deletedId;
-      });
-    });
+    // setGoals((prevGoals) => {
+    //   return prevGoals.filter((goalObj) => {
+    //     return goalObj.id !== deletedId;
+    //   });
+    // });
+    //delete from db
+    //call the function from firestoreHelper
+    deleteFromDB(deletedId, "goals");
   }
   function handleInputData(data: string) {
     // this function will receive data from Input
@@ -40,38 +73,32 @@ export default function App() {
     // setReceivedData(data);
     //close the modal
     // define a variable of type Goal object
-    let newGoal: Goal = { text: data, id: Math.random() };
+    let newGoal: goalData = { text: data };
+    // write to db by calling the functionf rom firestoreHelper
+    writeToDB(newGoal, "goals");
     //update it with the data received from Input and a random number
     // add the object to the goals array
     // use updater function in setState whenever you are
     // updating the state based on the previous state
-    setGoals((currGoals) => {
-      return [...currGoals, newGoal];
-    });
+    // setGoals((currGoals) => {
+    //   return [...currGoals, newGoal];
+    // });
     setIsModalVisible(false);
   }
   function dismissModal() {
     setIsModalVisible(false);
   }
-
-
-  function handleDeleteAll() {
-    Alert.alert(
-      "Delete All Goals",
-      "Are you sure you want to delete all goals?",
-      [
-        {
-          text: "No",
-          style: "cancel",
+  function deleteAll() {
+    Alert.alert("Delete All", "Are you sure you want to delete all goals?", [
+      {
+        text: "Yes",
+        onPress: () => {
+          setGoals([]);
         },
-        {
-          text: "Yes",
-          onPress: () => setGoals([]), 
-        },
-      ]
-    );
+      },
+      { text: "No", style: "cancel" },
+    ]);
   }
-
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
@@ -87,32 +114,33 @@ export default function App() {
       </View>
       <View style={styles.bottomContainer}>
         <FlatList
+          ItemSeparatorComponent={() => (
+            <View
+              style={{
+                height: 5,
+                backgroundColor: "gray",
+              }}
+            />
+          )}
+          ListEmptyComponent={
+            <Text style={styles.header}>No goals to show</Text>
+          }
+          ListHeaderComponent={
+            goals.length > 0 ? (
+              <Text style={styles.header}>My Goals List</Text>
+            ) : null
+          }
+          ListFooterComponent={
+            goals.length ? (
+              <Button title="Delete all" onPress={deleteAll} />
+            ) : null
+          }
           contentContainerStyle={styles.centeredHorizontal}
           data={goals}
           renderItem={({ item }) => {
             //pass the received item to GoalItem component as a prop
             return <GoalItem goalObj={item} deleteHandler={handleDeleteGoal} />;
           }}
-          ListEmptyComponent={() => (
-            <Text style={styles.emptyText}>No goals to show</Text>
-          )}
-
-          ItemSeparatorComponent={() => {
-            console.log("Rendering separator");
-            return <View style={styles.separator} />;
-          }}
-
-
-          ListHeaderComponent={goals.length > 0 ? (
-            <Text style={styles.headerText}>My Goals</Text>
-          ) : null}
-          ListFooterComponent={
-            goals.length > 0 ? (
-              <View style={styles.footerContainer}>
-                <Button title="Delete All" onPress={handleDeleteAll} color="red" />
-              </View>
-            ) : null}
-          
         />
         {/* <ScrollView contentContainerStyle={styles.centeredHorizontal}>
           {goals.map((goalObj) => {
@@ -145,30 +173,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#dcd",
     // alignItems: "center",
   },
-
   centeredHorizontal: {
     alignItems: "center",
   },
-  emptyText: {
-    textAlign: "center",
-    fontSize: 18,
-    color: "gray",
-    marginTop: 20,
-  },
-  headerText: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "purple",
-    textAlign: "center",
-    marginVertical: 15,
-  },
-  footerContainer: {
-    marginTop: 20,
-    alignItems: "center",
-  },
-  separator: {
-    height: 5,
-    backgroundColor: "#000",   
-    marginVertical: 8,
+  header: {
+    color: "indigo",
+    fontSize: 25,
+    marginTop: 10,
   },
 });
