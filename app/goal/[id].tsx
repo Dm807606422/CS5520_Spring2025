@@ -27,6 +27,7 @@ export default function GoalDetails() {
         getData();
     }, []);
     function warningHandler() {
+        
         setWarning(true);
         updateDB(id, "goals", { warning: true });
     }
@@ -47,4 +48,4 @@ export default function GoalDetails() {
 
 const styles = StyleSheet.create({
     warningText: { color: "red" },
-});
+}); 
