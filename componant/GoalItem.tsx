@@ -1,25 +1,33 @@
-import { StyleSheet, Text, View,Button } from 'react-native';
-import React from 'react';
-import {GoalFromDB} from "@/App"
+import { Button, StyleSheet, Text, View } from "react-native";
+import React from "react";
+import { Link, router } from "expo-router";
+import { GoalFromDB } from "@/App";
 
 interface GoalItemProps {
     goalObj: GoalFromDB;
     deleteHandler: (deletedId: string) => void;
 }
-
 export default function GoalItem({ goalObj, deleteHandler }: GoalItemProps) {
     return (
         <View style={styles.textContainer}>
             <Text style={styles.text}>{goalObj.text} </Text>
             <Button
-            title="X"
-            onPress={() => {
-              //pass the id
-                deleteHandler(goalObj.id);
-            }}
+                title="X"
+                onPress={() => {
+                    //pass the id
+                    deleteHandler(goalObj.id);
+                }}
             />
+            {/* <Link asChild href={`/goals/${goalObj.id}`}> */}
+            <Button
+                title="info"
+                onPress={() => {
+                    router.navigate(`/goals/${goalObj.id}?sort="asc"`);
+                }}
+            />
+            {/* </Link> */}
         </View>
-        );
+    );
 }
 
 const styles = StyleSheet.create({
@@ -29,7 +37,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#aaa",
         padding: 10,
         alignItems: "center",
-        marginTop: 1,
+        marginVertical: 10,
     },
     text: {
         color: "purple",
