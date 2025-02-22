@@ -1,16 +1,15 @@
-import { Alert,
+import {
+  Alert,
   Button,
   Image,
   Modal,
   StyleSheet,
   Text,
   TextInput,
-  View, } from "react-native";
+  View,
+} from "react-native";
 import React from "react";
 import { useState } from "react";
-
-
-
 
 interface InputProps {
   textInputFocus: boolean;
@@ -18,24 +17,20 @@ interface InputProps {
   modalVisible: boolean;
   dismissModal: () => void;
 }
-
 export default function Input({
   textInputFocus,
   inputHandler,
   modalVisible,
-  dismissModal
+  dismissModal,
 }: InputProps) {
-
   const [text, setText] = useState("");
   const [blur, setBlur] = useState(false);
   const minimumChar = 3;
-
 
   function updateText(changedText: string) {
     // update the text state
     setText(changedText);
   }
-
   function handleConfirm() {
     console.log("user has typed ", text);
     // call the callback from App
@@ -43,8 +38,6 @@ export default function Input({
     inputHandler(text);
     setText("");
   }
-
-
   function handleCancel() {
     // hide the modal
     Alert.alert("Cancel", "Are you sure you want to cancel", [
@@ -58,7 +51,6 @@ export default function Input({
       },
     ]);
   }
-
   return (
     <Modal transparent={true} visible={modalVisible} animationType="slide">
       <View style={styles.container}>
