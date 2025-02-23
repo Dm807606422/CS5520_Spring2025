@@ -118,11 +118,11 @@ export default function App() {
             </View>
             <View style={styles.bottomContainer}>
                 <FlatList
-                    ItemSeparatorComponent={() => (
+                    ItemSeparatorComponent={({ highlighted }) => (
                         <View
                             style={{
                                 height: 5,
-                                backgroundColor: "gray",
+                                backgroundColor: highlighted ? "blue" : "gray",
                             }}
                         />
                     )}
@@ -141,9 +141,9 @@ export default function App() {
                     }
                     contentContainerStyle={styles.centeredHorizontal}
                     data={goals}
-                    renderItem={({ item }) => {
+                    renderItem={({ item, separators }) => {
                         //pass the received item to GoalItem component as a prop
-                        return <GoalItem goalObj={item} deleteHandler={handleDeleteGoal} />;
+                        return <GoalItem goalObj={item} deleteHandler={handleDeleteGoal} separators={separators}/>;
                     }}
                 />
                 {/* <ScrollView contentContainerStyle={styles.centeredHorizontal}>
