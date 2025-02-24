@@ -4,14 +4,13 @@ import {
     deleteDoc,
     doc,
     getDoc,
+    getDocs,
     setDoc,
 } from "firebase/firestore";
 import { database } from "./firebaseSetup";
-export interface GoalData {
-    text: string;
-    warning?: boolean;
-}
-export async function writeToDB(data: GoalData, collectionName: string) {
+import { GoalData, User } from "@/types";
+
+export async function writeToDB(data: GoalData | User, collectionName: string) {
     try {
         const docRef = await addDoc(collection(database, collectionName), data);
     } catch (e) {
@@ -27,6 +26,20 @@ export async function deleteFromDB(id: string, collectionName: string) {
         console.error("Error deleting document: ", e);
     }
 }
+
+//read all documents from the database
+export async function readAllFromDB(collectionName: string) {
+    const querySnapshot = await getDocs(collection(database, collectionName));
+    if (querySnapshot.empty) return null;
+    let data: User[] = [];
+    querySnapshot.forEach((docSnapshot) => {
+        data.push(docSnapshot.data() as User);
+    });
+    //return the data
+    return data;
+}
+
+//read a document from the database
 export async function readDocFromDB(id: string, collectionName: string) {
     try {
         const docRef = doc(database, collectionName, id);
