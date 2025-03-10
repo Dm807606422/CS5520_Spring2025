@@ -10,12 +10,12 @@ import {
     Alert,
 } from "react-native";
 import Header from "@/components/Header";
-import Input from "../components/Input";
+import Input from "@/components/Input";
 import { useEffect, useState } from "react";
-import GoalItem from "../components/GoalItem";
-import { writeToDB, deleteFromDB } from "../Firebase/firestoreHelpers";
+import GoalItem from "@/components/GoalItem";
+import { writeToDB, deleteFromDB } from "@/Firebase/firestoreHelpers";
 import { collection, onSnapshot } from "firebase/firestore";
-import { database } from "../Firebase/firebaseSetup";
+import { database } from "@/Firebase/firebaseSetup";
 import PressableButton from "@/components/PressableButton";
 import { GoalData, GoalFromDB } from "@/types";
 
@@ -34,13 +34,11 @@ export default function App() {
                 } else {
                     let newArrayOfGoals: GoalFromDB[] = [];
                     querySnapshot.forEach((docSnapshot) => {
-                        console.log(docSnapshot.id);
                         newArrayOfGoals.push({
                             ...(docSnapshot.data() as GoalData),
                             id: docSnapshot.id,
                         });
                     });
-                    console.log("newArrayOfGoals", newArrayOfGoals);
                     setGoals(newArrayOfGoals);
                 }
             }
