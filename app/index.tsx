@@ -9,18 +9,15 @@ import {
     FlatList,
     Alert,
 } from "react-native";
-import Header from "@/componant/Header";
-import Input from "../componant/Input";
+import Header from "@/components/Header";
+import Input from "../components/Input";
 import { useEffect, useState } from "react";
-import GoalItem from "../componant/GoalItem";
-import { GoalData, writeToDB, deleteFromDB } from "../Firebase/firestoreHelpers";
+import GoalItem from "../components/GoalItem";
+import { writeToDB, deleteFromDB } from "../Firebase/firestoreHelpers";
 import { collection, onSnapshot } from "firebase/firestore";
 import { database } from "../Firebase/firebaseSetup";
-import PressableButton from "@/componant/PressableButton";
-
-export interface GoalFromDB extends GoalData {
-    id: string;
-}
+import PressableButton from "@/components/PressableButton";
+import { GoalData, GoalFromDB } from "@/types";
 
 export default function App() {
     const appName = "My Awesome App";
@@ -122,7 +119,7 @@ export default function App() {
                         <View
                             style={{
                                 height: 5,
-                                backgroundColor: highlighted ? "blue" : "gray",
+                                backgroundColor: highlighted ? "purple" : "gray",
                             }}
                         />
                     )}
@@ -143,7 +140,13 @@ export default function App() {
                     data={goals}
                     renderItem={({ item, separators }) => {
                         //pass the received item to GoalItem component as a prop
-                        return <GoalItem goalObj={item} deleteHandler={handleDeleteGoal} separators={separators}/>;
+                        return (
+                            <GoalItem
+                                goalObj={item}
+                                deleteHandler={handleDeleteGoal}
+                                separators={separators}
+                            />
+                        );
                     }}
                 />
                 {/* <ScrollView contentContainerStyle={styles.centeredHorizontal}>
