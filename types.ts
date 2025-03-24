@@ -1,6 +1,11 @@
+export interface userInput {
+    text: string;
+    imageUri: string;
+}
 export interface GoalData {
     text: string;
     warning?: boolean;
+    owner: string | null;
 }
 
 export interface User {
